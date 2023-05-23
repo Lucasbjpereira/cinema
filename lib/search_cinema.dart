@@ -16,25 +16,134 @@ class _SearchCinemaState extends State<SearchCinema> {
       body: Column(
         children: [
           const Header(),
-          const SizedBox(
-            height: 22,
-          ),
-          TextField(
-            decoration: InputDecoration(
-              filled: false,
-              hintText: 'Pesquisar',
-              suffixIcon: const Icon(Icons.search),
-              suffixIconColor: const Color.fromARGB(255, 217, 217, 217),
-              hintStyle: const TextStyle(
-                color: Color.fromARGB(
-                    255, 217, 217, 217), // Cor desejada para o hintText
-              ),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
+          Padding(
+            padding: const EdgeInsets.all(22.0),
+            child: Column(
+              children: [
+                TextField(
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFD9D9D9), // Cor do texto digitado
+                  ),
+                  decoration: InputDecoration(
+                    filled: false,
+                    hintText: 'Pesquisar',
+                    suffixIcon: const Icon(Icons.search),
+                    suffixIconColor: const Color(0x7CD9D9D9),
+                    hintStyle: const TextStyle(
+                      color: Color(0x7CD9D9D9), // Cor do hintText
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFD9D9D9),
+                      ), // Cor da borda quando não está em foco
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(
+                          color: Color(0xFFD9D9D9)), // Cor da borda ao focar
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'Filtrar por região',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFD9D9D9),
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 105,
+                      height: 105,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(200), // Raio dos cantos
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(45, 0, 0, 0)
+                                .withOpacity(0.1), // Cor e opacidade da sombra
+                            spreadRadius: 2, // Raio de propagação da sombra
+                            blurRadius: 2, // Raio de desfoque da sombra
+                            offset: const Offset(
+                                2, 2), // Deslocamento da sombra (x, y)
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(6), // Raio dos cantos
+                        child: Image.network(
+                          fit: BoxFit.cover,
+                          'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Cine Roxy 6 D+',
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFD9D9D9),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
+                            softWrap: true,
+                            maxLines: 2,
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFD9D9D9),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Colors.red, // Cor de fundo vermelho
+                            ),
+                            onPressed: () {},
+                            child: const Text('Enabled'),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ],
             ),
           )
         ],
