@@ -1,4 +1,5 @@
 import 'package:cinema/components/header.dart';
+import 'package:cinema/components/pesquisa.dart';
 import 'package:flutter/material.dart';
 
 class SearchCinema extends StatefulWidget {
@@ -22,37 +23,7 @@ class _SearchCinemaState extends State<SearchCinema> {
                 padding: const EdgeInsets.all(22.0),
                 child: Column(
                   children: [
-                    TextField(
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFFD9D9D9), // Cor do texto digitado
-                      ),
-                      decoration: InputDecoration(
-                        filled: false,
-                        hintText: 'Pesquisar',
-                        suffixIcon: const Icon(Icons.search),
-                        suffixIconColor: const Color(0x7CD9D9D9),
-                        hintStyle: const TextStyle(
-                          color: Color(0x7CD9D9D9), // Cor do hintText
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 16),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFD9D9D9),
-                          ), // Cor da borda quando não está em foco
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                              color:
-                                  Color(0xFFD9D9D9)), // Cor da borda ao focar
-                        ),
-                      ),
-                    ),
+                    const Pesquisa(),
                     const SizedBox(
                       height: 10,
                     ),
