@@ -15,7 +15,7 @@ class _HeaderState extends State<Header> {
         children: [
           SizedBox(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 11),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
