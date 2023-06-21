@@ -26,9 +26,6 @@ class _CinemaState extends State<Cinema> {
   }
 
   Future<void> loadMovies() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int cinemaId = prefs.getInt('selectedCinemaId') ?? 1;
-
     // Create an instance of CinemaData
     CinemaData cinemaData = CinemaData();
 
@@ -44,6 +41,8 @@ class _CinemaState extends State<Cinema> {
 
   @override
   Widget build(BuildContext context) {
+    List<Movie> slideMovies = movies.take(3).toList();
+
     return Scaffold(
       backgroundColor: const Color(0xFF111111),
       body: Stack(
@@ -73,19 +72,48 @@ class _CinemaState extends State<Cinema> {
                               });
                             },
                           ),
-                          items: movies.map((item) {
-                            return Container(
-                              margin: const EdgeInsets.all(5.0),
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(10.0),
-                                ),
-                                child: Image.network(
-                                  item.imageURL,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                ),
-                              ),
+                          items: slideMovies.map((item) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10.0),
+                                    ),
+                                    child: Stack(
+                                      children: [
+                                        Image.network(
+                                          item.imageURL,
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                        ),
+                                        Positioned(
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 35.0,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10.0,
+                                                horizontal: 10.0),
+                                            color:
+                                                Colors.black.withOpacity(0.7),
+                                            child: Text(
+                                              item.title,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           }).toList(),
                         ),
@@ -97,13 +125,13 @@ class _CinemaState extends State<Cinema> {
                             alignment: Alignment.center,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(movies.length, (index) {
+                              children:
+                                  List.generate(slideMovies.length, (index) {
                                 return Container(
                                   width: 10.0,
                                   height: 10.0,
                                   margin: const EdgeInsets.symmetric(
-                                    horizontal: 4.0,
-                                  ),
+                                      horizontal: 4.0),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: _currentSlideIndex == index
@@ -242,14 +270,21 @@ class _CinemaState extends State<Cinema> {
   }
 
   Widget _buildEmCartazCards() {
+    movies;
+    List<Movie> emCartazMovies = movies
+        .where((movie) =>
+            DateTime.parse(movie.releaseDate).isBefore(DateTime.now()))
+        .toList();
+    emCartazMovies;
+
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: (movies.length / 2).ceil(),
+      itemCount: (emCartazMovies.length / 2).ceil(),
       itemBuilder: (context, sectionIndex) {
         int startIndex = sectionIndex * 2;
         int endIndex = startIndex + 2;
-        if (endIndex > movies.length) endIndex = movies.length;
+        if (endIndex > emCartazMovies.length) endIndex = emCartazMovies.length;
 
         return GridView.count(
           physics: const NeverScrollableScrollPhysics(),
@@ -260,7 +295,7 @@ class _CinemaState extends State<Cinema> {
           mainAxisSpacing: 15,
           children: List.generate(endIndex - startIndex, (index) {
             int movieIndex = startIndex + index;
-            Movie movie = movies[movieIndex];
+            Movie movie = emCartazMovies[movieIndex];
 
             return Container(
               decoration: BoxDecoration(
@@ -296,14 +331,19 @@ class _CinemaState extends State<Cinema> {
   }
 
   Widget _buildEmBreveCards() {
+    List<Movie> emBreveMovies = movies
+        .where((movie) =>
+            DateTime.parse(movie.releaseDate).isAfter(DateTime.now()))
+        .toList();
+
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: (movies.length / 2).ceil(),
+      itemCount: (emBreveMovies.length / 2).ceil(),
       itemBuilder: (context, sectionIndex) {
         int startIndex = sectionIndex * 2;
         int endIndex = startIndex + 2;
-        if (endIndex > movies.length) endIndex = movies.length;
+        if (endIndex > emBreveMovies.length) endIndex = emBreveMovies.length;
 
         return GridView.count(
           physics: const NeverScrollableScrollPhysics(),
@@ -314,7 +354,7 @@ class _CinemaState extends State<Cinema> {
           mainAxisSpacing: 15,
           children: List.generate(endIndex - startIndex, (index) {
             int movieIndex = startIndex + index;
-            Movie movie = movies[movieIndex];
+            Movie movie = emBreveMovies[movieIndex];
 
             return Container(
               decoration: BoxDecoration(
@@ -353,13 +393,16 @@ class _CinemaState extends State<Cinema> {
 class Movie {
   final String title;
   final String imageURL;
+  final String releaseDate;
 
-  Movie({required this.title, required this.imageURL});
+  Movie(
+      {required this.title, required this.imageURL, required this.releaseDate});
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       title: json['name'],
       imageURL: json['image'],
+      releaseDate: json['data-estreia'],
     );
   }
 }
@@ -379,10 +422,6 @@ class CinemaData {
     if (cinema != null) {
       List<dynamic> movieList = cinema['filmes'];
       movies = movieList.map((item) => Movie.fromJson(item)).toList();
-    } else {
-      // Handle case where cinema is not found
-      // You can show an error message or handle it in any other way you prefer
-      print('Cinema not found');
     }
   }
 }

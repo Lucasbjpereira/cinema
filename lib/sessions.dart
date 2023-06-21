@@ -1,6 +1,26 @@
+import 'dart:convert';
 import 'package:cinema/components/header.dart';
-import 'package:cinema/components/menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+void main() {
+  runApp(const CinemaApp());
+}
+
+class CinemaApp extends StatelessWidget {
+  const CinemaApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Cinema App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const Sessions(),
+    );
+  }
+}
 
 class MovieSession {
   final String movieImage;
@@ -21,14 +41,40 @@ class MovieSession {
 }
 
 class MovieSchedule {
-  final String room;
-  final String language;
-  final List<String> showTimes;
+  final int id;
+  final String date;
+  final List<Room> rooms;
 
   MovieSchedule({
-    required this.room,
-    required this.language,
-    required this.showTimes,
+    required this.id,
+    required this.date,
+    required this.rooms,
+  });
+}
+
+class Room {
+  final int id;
+  final String name;
+  final bool isDubbed;
+  final bool is3D;
+  final List<Time> times;
+
+  Room({
+    required this.id,
+    required this.name,
+    required this.isDubbed,
+    required this.is3D,
+    required this.times,
+  });
+}
+
+class Time {
+  final int id;
+  final String time;
+
+  Time({
+    required this.id,
+    required this.time,
   });
 }
 
@@ -41,6 +87,7 @@ class Sessions extends StatefulWidget {
 
 class _SessionsState extends State<Sessions> {
   DateTime selectedDate = DateTime.now();
+  List<MovieSession> movies = [];
 
   List<DateTime> availableDates = [
     DateTime.now(),
@@ -52,33 +99,51 @@ class _SessionsState extends State<Sessions> {
     DateTime.now().add(const Duration(days: 6)),
   ];
 
-  List<MovieSession> movieSessions = [
-    MovieSession(
-      movieImage: 'https://placeimg.com/200/300/movie1',
-      movieGenre: 'Ação',
-      movieDuration: '2h 15min',
-      movieClassification: '12',
-      movieTitle: 'Filme 1',
-      schedules: [
-        MovieSchedule(
-          room: 'Sala 1',
-          language: 'Dublado',
-          showTimes: ['10:00', '13:00', '16:00'],
+  List<MovieSession> movieSessions = [];
+
+  Future<void> _loadCinemaData() async {
+    final String jsonString = await rootBundle.loadString('assets/db.json');
+    final data = jsonDecode(jsonString);
+    List<dynamic> cinemas = data['cinemas'];
+
+    setState(() {
+      movieSessions = List<MovieSession>.from(cinemas[0]['filmes'].map(
+        (session) => MovieSession(
+          movieImage: session['image'],
+          movieGenre: session['genero'],
+          movieDuration: session['duracao'],
+          movieClassification: session['classificacao'],
+          movieTitle: session['name'],
+          schedules: List<MovieSchedule>.from(session['sessoes'].map(
+            (schedule) => MovieSchedule(
+              id: schedule['id'],
+              date: schedule['data'],
+              rooms: List<Room>.from(schedule['salas'].map(
+                (room) => Room(
+                  id: room['id'],
+                  name: room['nome'],
+                  isDubbed: room['dublado'],
+                  is3D: room['3d'],
+                  times: List<Time>.from(room['horarios'].map(
+                    (time) => Time(
+                      id: time['id'],
+                      time: time['horario'],
+                    ),
+                  )),
+                ),
+              )),
+            ),
+          )),
         ),
-        MovieSchedule(
-          room: 'Sala 2',
-          language: 'Legendado',
-          showTimes: ['12:00', '15:00', '18:00'],
-        ),
-        MovieSchedule(
-          room: 'Sala 3',
-          language: 'Dublado',
-          showTimes: ['14:00', '17:00', '20:00'],
-        ),
-      ],
-    ),
-    // Adicione mais MovieSessions conforme necessário
-  ];
+      ));
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCinemaData();
+  }
 
   Color _getClassificationColor(String classification) {
     int? classificationInt = int.tryParse(classification);
@@ -116,6 +181,8 @@ class _SessionsState extends State<Sessions> {
       body: Stack(
         children: [
           ListView(
+            physics:
+                const AlwaysScrollableScrollPhysics(), // Definir physics como AlwaysScrollableScrollPhysics
             children: [
               const Header(),
               Padding(
@@ -165,11 +232,8 @@ class _SessionsState extends State<Sessions> {
                   ),
                 ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: movieSessions.length,
-                itemBuilder: (context, index) {
-                  MovieSession session = movieSessions[index];
+              Column(
+                children: movieSessions.map((session) {
                   return Container(
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.only(bottom: 20),
@@ -243,7 +307,7 @@ class _SessionsState extends State<Sessions> {
                                 _buildClassificationContainer(
                                     session.movieClassification),
                               ],
-                            )
+                            ),
                           ],
                         ),
                         const SizedBox(width: 10),
@@ -254,78 +318,56 @@ class _SessionsState extends State<Sessions> {
                               Text(
                                 session.movieTitle,
                                 style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 5),
+                              const Text(
+                                'Sessões:',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: session.schedules.map((schedule) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
+                                  final roomSchedule = schedule
+                                      .rooms[0]; // Get the first room schedule
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
                                         children: [
-                                          Text(
-                                            schedule.room,
-                                            style: const TextStyle(
-                                              fontSize: 14,
+                                          const TextSpan(
+                                            text: 'Sala: ',
+                                            style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.orange,
                                             ),
                                           ),
-                                          const SizedBox(width: 10),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 15, vertical: 3),
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(
-                                                  10), // Altere o valor de acordo com o raio desejado
-                                              border: Border.all(
-                                                color: const Color(
-                                                    0xFF6FBEFC), // Cor da borda azul
-                                                width: 1, // Largura da borda
-                                              ),
-                                            ),
-                                            child: Text(
-                                              schedule.language,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
+                                          TextSpan(
+                                            text: roomSchedule.name,
+                                          ),
+                                          const TextSpan(
+                                            text: '\nHorários:',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
+                                          for (var time
+                                              in roomSchedule.times) ...[
+                                            TextSpan(text: '\n${time.time}'),
+                                          ],
                                         ],
                                       ),
-                                      const SizedBox(height: 5),
-                                      Wrap(
-                                        spacing: 30,
-                                        children:
-                                            schedule.showTimes.map((showTime) {
-                                          return Chip(
-                                            label: Text(showTime),
-                                            backgroundColor:
-                                                const Color(0xFF590A0A),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            labelStyle: const TextStyle(
-                                                color: Colors.white),
-                                          );
-                                        }).toList(),
-                                      ),
-                                      const Divider(
-                                        color: Color.fromARGB(71, 209, 209,
-                                            209), // Cor do Divider
-                                        thickness: 1.0, // Espessura do Divider
-                                      ),
-                                      const SizedBox(height: 10),
-                                    ],
+                                    ),
                                   );
                                 }).toList(),
                               ),
@@ -335,14 +377,10 @@ class _SessionsState extends State<Sessions> {
                       ],
                     ),
                   );
-                },
-              )
+                }).toList(),
+              ),
             ],
           ),
-          const SizedBox(
-            height: 30,
-          ),
-          const Menu(),
         ],
       ),
     );
