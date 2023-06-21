@@ -1,16 +1,52 @@
+import 'dart:convert';
 import 'package:cinema/components/header.dart';
 import 'package:cinema/components/menu.dart';
 import 'package:cinema/components/pesquisa.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchCinema extends StatefulWidget {
-  const SearchCinema({super.key});
+  const SearchCinema({Key? key}) : super(key: key);
 
   @override
   State<SearchCinema> createState() => _SearchCinemaState();
 }
 
 class _SearchCinemaState extends State<SearchCinema> {
+  List<dynamic> cinemasData = [];
+  int? selectedCinemaId;
+  SharedPreferences? localStorage;
+
+  @override
+  void initState() {
+    super.initState();
+    loadCinemasData();
+    initializeSharedPreferences();
+  }
+
+  Future<void> loadCinemasData() async {
+    final jsonString = await rootBundle.loadString('assets/db.json');
+    final data = jsonDecode(jsonString);
+    setState(() {
+      cinemasData = data['cinemas'];
+    });
+  }
+
+  void initializeSharedPreferences() async {
+    localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      selectedCinemaId = localStorage!.getInt('selectedCinemaId');
+    });
+  }
+
+  void selectCinema(int cinemaId) {
+    setState(() {
+      selectedCinemaId = cinemaId;
+      localStorage!.setInt('selectedCinemaId', cinemaId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,708 +81,112 @@ class _SearchCinemaState extends State<SearchCinema> {
                       height: 30,
                     ),
                     Column(
-                      children: [
-                        Row(
+                      children: cinemasData.map((cinema) {
+                        final int cinemaId = cinema['id'];
+                        final String name = cinema['name'];
+                        final String address = cinema['endereco'];
+                        final String imageUrl = cinema['image'];
+
+                        return Column(
                           children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
+                            Row(
+                              children: [
+                                Container(
+                                  width: 105,
+                                  height: 105,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(200),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color.fromARGB(45, 0, 0, 0)
+                                            .withOpacity(0.1),
+                                        spreadRadius: 2,
+                                        blurRadius: 2,
+                                        offset: const Offset(2, 2),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(6),
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
+                                const SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        name,
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFFD9D9D9),
                                         ),
                                       ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        address,
+                                        softWrap: true,
+                                        maxLines: 2,
+                                        style: const TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xFFD9D9D9),
                                         ),
                                       ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color(0xFF111111),
+                                            side: BorderSide(
+                                              width: 2,
+                                              color:
+                                                  selectedCinemaId == cinemaId
+                                                      ? const Color(0xFF590A0A)
+                                                      : Colors.transparent,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            selectCinema(cinemaId);
+                                          },
+                                          child: Text(
+                                            selectedCinemaId == cinemaId
+                                                ? 'Selecionado'
+                                                : 'Selecionar',
+                                          ),
                                         ),
                                       ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
                                 ),
-                              ),
+                              ],
                             ),
                             const SizedBox(
-                              width: 15,
+                              height: 30,
                             ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
                           ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 105,
-                              height: 105,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                    200), // Raio dos cantos
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color.fromARGB(45, 0, 0, 0)
-                                        .withOpacity(
-                                            0.1), // Cor e opacidade da sombra
-                                    spreadRadius:
-                                        2, // Raio de propagação da sombra
-                                    blurRadius: 2, // Raio de desfoque da sombra
-                                    offset: const Offset(
-                                        2, 2), // Deslocamento da sombra (x, y)
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(6), // Raio dos cantos
-                                child: Image.network(
-                                  fit: BoxFit.cover,
-                                  'https://www.animalucas.com/wp-content/uploads/2017/08/cineroxy.jpg', // URL da imagem desejada
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 15,
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Cine Roxy 6 D+',
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'Rua Frei Gaspar 365, São Vicente, SP, 11310-935',
-                                    softWrap: true,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontFamily: 'Inter',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFD9D9D9),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                            0xFF111111), // Cor de fundo vermelho
-                                        side: const BorderSide(
-                                          width: 2, // Largura da borda
-                                          color:
-                                              Color(0xFF590A0A), // Cor da borda
-                                        ),
-                                      ),
-                                      onPressed: () {},
-                                      child: const Text('Selecionar'),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 60,
-                        ),
-                      ],
-                    )
+                        );
+                      }).toList(),
+                    ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(
