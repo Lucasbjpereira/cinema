@@ -1,0 +1,251 @@
+{
+    "cinemas": [
+        {
+            "id": 1,
+            "name": "Cinemark",
+            "regiao": 6,
+            "endereco": "Rua Alexandre Martins 80, Santos, SP, 11025-905",
+            "image": "https://iguatemi.com.br/marketplace/sites/marketplace/files/logo-1360166293238.png",
+            "filmes": [
+                {
+                    "id": 1,
+                    "name": "O Esquadrão Suicida",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/wTS3dS2DJiMFFgqKDz5fxMTri.jpg",
+                    "genero": "Ação, Aventura, Fantasia, Comédia",
+                    "classificacao": "16",
+                    "data-estreia": "2021-08-05",
+                    "duracao": "02h12 min",
+                    "sinopse": "Os supervilões Harley Quinn (Margot Robbie), Bloodsport (Idris Elba), Peacemaker (John Cena) e uma coleção de malucos condenados da prisão de Belle Reve juntam-se à super-secreta e super-obscura Força Tarefa X, enquanto são deixados na remota ilha de Corto Maltese para combater o inimigo.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4",
+                    "sessoes": [
+                        {
+                            "id": 1,
+                            "data": "2021-08-05",
+                            "salas": [
+                                {
+                                    "id": 1,
+                                    "nome": "Sala 1",
+                                    "dublado": true,
+                                    "3d": true,
+                                    "horarios": [
+                                        {
+                                            "id": 1,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 2,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 3,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 4,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 5,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }, {
+                                    "id": 2,
+                                    "nome": "Sala 2",
+                                    "dublado": false,
+                                    "3d": false,
+                                    "horarios": [
+                                        {
+                                            "id": 6,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 7,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 8,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 9,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 10,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }, {
+                                    "id": 3,
+                                    "nome": "Sala 3",
+                                    "dublado": true,
+                                    "3d": false,
+                                    "horarios": [
+                                        {
+                                            "id": 11,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 12,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 13,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 14,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 15,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }, {
+                                    "id": 4,
+                                    "nome": "Sala 4",
+                                    "dublado": false,
+                                    "3d": true,
+                                    "horarios": [
+                                        {
+                                            "id": 16,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 17,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 18,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 19,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 20,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "Velozes e Furiosos 9",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/8L4B8G8GjFTp0lTR5tAQThKoQBg.jpg",
+                    "cinema": 1,
+                    "genero": "Ação, Aventura, Crime, Thriller",
+                    "classificacao": "14",
+                    "data-estreia": "2021-06-24",
+                    "duracao": "02h25 min",
+                    "sinopse": "Dominic Toretto (Vin Diesel) e Letty (Michelle Rodriguez) vivem uma vida pacata ao lado de seu filho Brian. Mas eles logo são ameaçados pelo passado de Dom: seu irmão desaparecido Jakob (John Cena). Trata-se de um assassino habilidoso e motorista excelente, que está trabalhando ao lado de Cipher (Charlize Theron), vilã de Velozes & Furiosos 8. Para enfrentá-los, Toretto vai precisar reunir sua equipe novamente, inclusive Han (Sung Kang), que todos acreditavam estar morto.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                },
+                {
+                    "id": 3,
+                    "name": "Um Lugar Silencioso - Parte II",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/4q2hz2m8hubgvijz8Ez0T2Os2Yv.jpg",
+                    "cinema": 1,
+                    "genero": "Thriller, Ficção científica, Terror",
+                    "classificacao": "14",
+                    "data-estreia": "2021-06-10",
+                    "duracao": "01h37 min",
+                    "sinopse": "Logo após os acontecimentos mortais, até mesmo dentro de casa, a família Abbott precisa agora encarar o terror mundo afora, continuando a lutar para sobreviver em silêncio. Obrigados a se aventurar pelo desconhecido, eles rapidamente percebem que as criaturas que caçam pelo som não são as únicas ameaças que os observam",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                },
+                {
+                    "id": 4,
+                    "name": "Viúva Negra",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg",
+                    "cinema": 1,
+                    "genero": "Ação, Aventura, Thriller",
+                    "classificacao": "14",
+                    "data-estreia": "2021-07-08",
+                    "duracao": "02h14 min",
+                    "sinopse": "Natasha Romanoff \"Viúva Negra\" precisa confrontar partes de sua história quando surge uma conspiração perigosa ligada ao seu passado. Perseguida por uma força que não irá parar até derrotá-la, Natasha terá que lidar com sua antiga vida de espiã, e também reencontrar membros de sua família que deixou para trás antes de se tornar parte dos Vingadores.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                }, {
+                    "id": 5,
+                    "name": "Space Jam: Um Novo Legado",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/5bFK5d3mVTAvBCXi5NPWH0tYjKl.jpg",
+                    "cinema": 1,
+                    "genero": "Animação, Comédia, Família, Ficção científica",
+                    "classificacao": "Livre",
+                    "data-estreia": "2021-07-15",
+                    "duracao": "01h55 min",
+                    "sinopse": "O superastro LeBron James junta forças com o agente Pernalonga para derrotar o Goon Squad e salvar seu filho perdido no espaço.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                }, {
+                    "id": 6,
+                    "name": "Invocação do Mal 3: A Ordem do Demônio",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/2yJyjyi2jEjZpRlKcZJ4ZYrNTIW.jpg",
+                    "cinema": 1,
+                    "genero": "Thriller, Terror, Mistério",
+                    "classificacao": "16",
+                    "data-estreia": "2021-06-03",
+                    "duracao": "01h52 min",
+                    "sinopse": "Revela uma história arrepiante de terror, assassinato e um mal desconhecido que chocou até os experientes investigadores de atividades paranormais Ed e Lorraine Warren. Um dos casos mais sensacionais de seus arquivos, começa com uma luta pela alma de um garoto, depois os leva além de tudo o que já haviam visto antes, para marcar a primeira vez na história dos Estados Unidos que um suspeito de assassinato alega ter tido uma possessão demoníaca como defesa.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                }, {
+                    "id": 7,
+                    "name": "Luca",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/jTswp6KyDYKtvC52GbHagrZbGvD.jpg",
+                    "cinema": 1,
+                    "genero": "Animação, Comédia, Família, Fantasia",
+                    "classificacao": "Livre",
+                    "data-estreia": "2021-06-17",
+                    "duracao": "01h35 min",
+                    "sinopse": "Ambientado em uma bela cidade litorânea na Riviera Italiana, o novo filme animado original da Disney e Pixar é uma história de amadurecimento sobre um jovem que vive um verão inesquecível repleto de sorvete, massas e passeios intermináveis de scooter. Luca compartilha essas aventuras com seu novo melhor amigo, mas toda a diversão é ameaçada por um segredo profundamente bem guardado: eles são monstros marinhos de outro mundo, logo abaixo da superfície da água.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                }, {
+                    "id": 8,
+                    "name": "Velozes & Furiosos 9",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/bOFaAXmWWXC3Rbv4u4uM9ZSzRXP.jpg",
+                    "cinema": 1,
+                    "genero": "Ação, Crime, Thriller",
+                    "classificacao": "14",
+                    "data-estreia": "2021-06-24",
+                    "duracao": "02h25 min",
+                    "sinopse": "Dominic Toretto e sua família precisam enfrentar o seu irmão mais novo Jakob, um assassino mortal que está trabalhando com uma antiga inimiga, a cyber-terrorista Cipher.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                }, {
+                    "id": 9,
+                    "name": "Um Lugar Silencioso - Parte II",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/4q2hz2m8hubgvijz8Ez0T2Os2Yv.jpg",
+                    "cinema": 1,
+                    "genero": "Thriller, Ficção científica, Terror",
+                    "classificacao": "14",
+                    "data-estreia": "2021-06-10",
+                    "duracao": "01h37 min",
+                    "sinopse": "Logo após os acontecimentos mortais, até mesmo dentro de casa, a família Abbott precisa agora encarar o terror mundo afora, continuando a lutar para sobreviver em silêncio. Obrigados a se aventurar pelo desconhecido, eles rapidamente percebem que as criaturas que caçam pelo som não são as únicas ameaças que os observam",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                }, {
+                    "id": 10,
+                    "name": "Viúva Negra",
+                    "image": "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg",
+                    "cinema": 1,
+                    "genero": "Ação, Aventura, Thriller",
+                    "classificacao": "14",
+                    "data-estreia": "2021-07-08",
+                    "duracao": "02h14 min",
+                    "sinopse": "Natasha Romanoff \"Viúva Negra\" precisa confrontar partes de sua história quando surge uma conspiração perigosa ligada ao seu passado. Perseguida por uma força que não irá parar até derrotá-la, Natasha terá que lidar com sua antiga vida de espiã, e também reencontrar membros de sua família que deixou para trás antes de se tornar parte dos Vingadores.",
+                    "trailer": "https://www.youtube.com/watch?v=8pYp4T8TdP4"
+                }
+            ]
+        }, {
+            "id": 2,
+            "name": "Roxy",
+            "regiao": 6,
+            "endereco": "Av. Ana Costa 443, Santos, SP, 11060-002",
+            "image": "https://www.exibidor.com.br/fotos/noticias/notundefined_1552661611.png"
+        }, {
+            "id": 3,
+            "name": "Cineflix",
+            "regiao": 6,
+            "endereco": "Av. Ana Costa 555, Santos, SP, 11060-002",
+            "image": "https://th.bing.com/th/id/R.e1fd8d90dbcaff1a53be621d2eec27f9?rik=AI2niIeT0RiEtw&pid=ImgRaw&r=0"
+        }
+    ]
+}
