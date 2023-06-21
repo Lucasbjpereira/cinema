@@ -3,9 +3,12 @@ import 'package:cinema/components/header.dart';
 import 'package:cinema/components/menu.dart';
 import 'package:cinema/components/pesquisa.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class Cinema extends StatefulWidget {
-  const Cinema({super.key});
+  const Cinema({Key? key}) : super(key: key);
 
   @override
   State<Cinema> createState() => _CinemaState();
@@ -14,6 +17,30 @@ class Cinema extends StatefulWidget {
 class _CinemaState extends State<Cinema> {
   int _currentSlideIndex = 0;
   String _currentCategory = 'Em cartaz';
+  List<Movie> movies = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadMovies();
+  }
+
+  Future<void> loadMovies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int cinemaId = prefs.getInt('selectedCinemaId') ?? 1;
+
+    // Create an instance of CinemaData
+    CinemaData cinemaData = CinemaData();
+
+    // Fetch movies and update the state
+    // ignore: use_build_context_synchronously
+    await cinemaData.fetchMovies(context);
+    cinemaData;
+    // Update the movies list
+    setState(() {
+      movies = cinemaData.movies;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,19 +73,15 @@ class _CinemaState extends State<Cinema> {
                               });
                             },
                           ),
-                          items: [
-                            'https://placeimg.com/640/480/nature',
-                            'https://placeimg.com/640/480/arch',
-                            'https://placeimg.com/640/480/animals',
-                            'https://placeimg.com/640/480/people',
-                          ].map((item) {
+                          items: movies.map((item) {
                             return Container(
                               margin: const EdgeInsets.all(5.0),
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.all(
-                                    Radius.circular(10.0)),
+                                  Radius.circular(10.0),
+                                ),
                                 child: Image.network(
-                                  item,
+                                  item.imageURL,
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                 ),
@@ -74,12 +97,13 @@ class _CinemaState extends State<Cinema> {
                             alignment: Alignment.center,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(4, (index) {
+                              children: List.generate(movies.length, (index) {
                                 return Container(
                                   width: 10.0,
                                   height: 10.0,
                                   margin: const EdgeInsets.symmetric(
-                                      horizontal: 4.0),
+                                    horizontal: 4.0,
+                                  ),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: _currentSlideIndex == index
@@ -221,16 +245,23 @@ class _CinemaState extends State<Cinema> {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: 2, // Defina o número de seções aqui
+      itemCount: (movies.length / 2).ceil(),
       itemBuilder: (context, sectionIndex) {
+        int startIndex = sectionIndex * 2;
+        int endIndex = startIndex + 2;
+        if (endIndex > movies.length) endIndex = movies.length;
+
         return GridView.count(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           crossAxisCount: 2,
-          childAspectRatio: 0.7, // Defina a proporção dos cards aqui
-          crossAxisSpacing: 25, // Espaçamento horizontal entre os itens
-          mainAxisSpacing: 15, // Espaçamento vertical entre os itens
-          children: List.generate(2, (index) {
+          childAspectRatio: 0.7,
+          crossAxisSpacing: 25,
+          mainAxisSpacing: 15,
+          children: List.generate(endIndex - startIndex, (index) {
+            int movieIndex = startIndex + index;
+            Movie movie = movies[movieIndex];
+
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
@@ -240,16 +271,16 @@ class _CinemaState extends State<Cinema> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: Image.network(
-                      'https://placeimg.com/640/480/nature',
+                      movie.imageURL,
                       height: 200,
                       fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Título do Filme',
+                  Text(
+                    movie.title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color.fromARGB(255, 255, 255, 255),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -268,16 +299,23 @@ class _CinemaState extends State<Cinema> {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: 2, // Defina o número de seções aqui
+      itemCount: (movies.length / 2).ceil(),
       itemBuilder: (context, sectionIndex) {
+        int startIndex = sectionIndex * 2;
+        int endIndex = startIndex + 2;
+        if (endIndex > movies.length) endIndex = movies.length;
+
         return GridView.count(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           crossAxisCount: 2,
-          childAspectRatio: 0.7, // Defina a proporção dos cards aqui
-          crossAxisSpacing:
-              25, // Espaçamento horizontal entre os itens Espaçamento vertical
-          children: List.generate(2, (index) {
+          childAspectRatio: 0.7,
+          crossAxisSpacing: 25,
+          mainAxisSpacing: 15,
+          children: List.generate(endIndex - startIndex, (index) {
+            int movieIndex = startIndex + index;
+            Movie movie = movies[movieIndex];
+
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
@@ -287,16 +325,16 @@ class _CinemaState extends State<Cinema> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: Image.network(
-                      'https://placeimg.com/640/480/nature',
+                      movie.imageURL,
                       height: 200,
                       fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Em breve',
+                  Text(
+                    movie.title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Color.fromARGB(255, 255, 255, 255),
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -309,5 +347,42 @@ class _CinemaState extends State<Cinema> {
         );
       },
     );
+  }
+}
+
+class Movie {
+  final String title;
+  final String imageURL;
+
+  Movie({required this.title, required this.imageURL});
+
+  factory Movie.fromJson(Map<String, dynamic> json) {
+    return Movie(
+      title: json['name'],
+      imageURL: json['image'],
+    );
+  }
+}
+
+class CinemaData {
+  List<Movie> movies = [];
+
+  Future<void> fetchMovies(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int selectedCinemaId = prefs.getInt('selectedCinemaId') ?? 0;
+
+    // Load cinema data from db.json
+    final String jsonString = await rootBundle.loadString('assets/db.json');
+    final data = jsonDecode(jsonString);
+    Map<String, dynamic>? cinema = data['cinemas'][selectedCinemaId];
+    // Load movies of the current cinema
+    if (cinema != null) {
+      List<dynamic> movieList = cinema['filmes'];
+      movies = movieList.map((item) => Movie.fromJson(item)).toList();
+    } else {
+      // Handle case where cinema is not found
+      // You can show an error message or handle it in any other way you prefer
+      print('Cinema not found');
+    }
   }
 }

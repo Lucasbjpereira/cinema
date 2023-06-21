@@ -124,11 +124,11 @@ class _SearchCinemaState extends State<SearchCinema> {
                                     children: [
                                       Text(
                                         name,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
-                                          color: const Color(0xFFD9D9D9),
+                                          color: Color(0xFFD9D9D9),
                                         ),
                                       ),
                                       const SizedBox(
@@ -187,10 +187,10 @@ class _SearchCinemaState extends State<SearchCinema> {
                   ],
                 ),
               ),
+              const SizedBox(
+                height: 30,
+              ),
             ],
-          ),
-          const SizedBox(
-            height: 30,
           ),
           const Menu(),
         ],
