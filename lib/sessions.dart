@@ -1,29 +1,13 @@
 import 'dart:convert';
 import 'package:cinema/components/header.dart';
 import 'package:cinema/components/menu.dart';
+import 'package:cinema/filme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-void main() {
-  runApp(const CinemaApp());
-}
-
-class CinemaApp extends StatelessWidget {
-  const CinemaApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Cinema App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const Sessions(),
-    );
-  }
-}
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MovieSession {
+  final int id;
   final String movieImage;
   final String movieGenre;
   final String movieDuration;
@@ -32,6 +16,7 @@ class MovieSession {
   final List<MovieSchedule> schedules;
 
   MovieSession({
+    required this.id,
     required this.movieImage,
     required this.movieGenre,
     required this.movieDuration,
@@ -104,6 +89,7 @@ class _SessionsState extends State<Sessions> {
     setState(() {
       movieSessions = List<MovieSession>.from(cinemas[0]['filmes'].map(
         (session) => MovieSession(
+          id: session['id'],
           movieImage: session['image'],
           movieGenre: session['genero'],
           movieDuration: session['duracao'],
@@ -135,11 +121,9 @@ class _SessionsState extends State<Sessions> {
   }
 
   List<MovieSession> getFilteredSessions() {
-    DateTime currentDate = DateTime.now();
-
     return movieSessions.where((session) {
       for (MovieSchedule schedule in session.schedules) {
-        if (DateTime.parse(schedule.date).isAfter(currentDate)) {
+        if (schedule.date == selectedDate.toString().split(' ')[0]) {
           return true;
         }
       }
@@ -202,7 +186,6 @@ class _SessionsState extends State<Sessions> {
                       child: SizedBox(
                         height: 40,
                         child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           itemCount: availableDates.length,
                           itemBuilder: (context, index) {
@@ -251,6 +234,30 @@ class _SessionsState extends State<Sessions> {
               }
 
               MovieSession session = filteredSessions[index - 1];
+              List<MovieSchedule> schedulesForDate = session.schedules
+                  .where((schedule) =>
+                      schedule.date == selectedDate.toString().split(' ')[0])
+                  .toList();
+
+              if (schedulesForDate.isEmpty) {
+                return Column(
+                  children: [
+                    SizedBox(height: 200),
+                    const Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        'Não foram encontradas sessões da data selecionada.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(96, 255, 255, 255),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
               return Container(
                 padding: const EdgeInsets.all(10),
                 margin: const EdgeInsets.only(bottom: 20),
@@ -261,25 +268,37 @@ class _SessionsState extends State<Sessions> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              10), // Altere o valor de acordo com o raio desejado
+                          borderRadius: BorderRadius.circular(10),
                           child: Container(
                             decoration: BoxDecoration(
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(
-                                      0.5), // Cor e opacidade da sombra
-                                  spreadRadius: 2, // Propagação da sombra
-                                  blurRadius: 5, // Desfoque da sombra
-                                  offset: const Offset(0,
-                                      3), // Deslocamento da sombra (horizontal, vertical)
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
                                 ),
                               ],
                             ),
-                            child: Image.network(
-                              session.movieImage,
-                              height: 200,
-                              fit: BoxFit.cover,
+                            child: GestureDetector(
+                              onTap: () async {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                int sessionId = session.id;
+                                sessionId;
+                                prefs.setInt('selectedMovieId', session.id);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Filme(),
+                                  ),
+                                );
+                              },
+                              child: Image.network(
+                                session.movieImage,
+                                height: 200,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
@@ -342,10 +361,7 @@ class _SessionsState extends State<Sessions> {
                         const SizedBox(height: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: session.schedules
-                              .where((schedule) =>
-                                  schedule.date ==
-                                  selectedDate.toString().split(' ')[0])
+                          children: schedulesForDate
                               .expand((schedule) => schedule.rooms.map(
                                     (room) => Column(
                                       crossAxisAlignment:
@@ -381,13 +397,12 @@ class _SessionsState extends State<Sessions> {
                                               .map(
                                                 (time) => ClipRRect(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          5), // Valor do raio desejado
+                                                      BorderRadius.circular(5),
                                                   child: Container(
                                                     padding:
                                                         const EdgeInsets.all(5),
-                                                    color: const Color(
-                                                        0xFF590A0A), // Cor de fundo do horário
+                                                    color:
+                                                        const Color(0xFF590A0A),
                                                     child: Text(
                                                       time.time,
                                                       style: const TextStyle(
@@ -411,7 +426,7 @@ class _SessionsState extends State<Sessions> {
                 ),
               );
             },
-          ),
+          )
         ],
       ),
       bottomNavigationBar: const SizedBox(
