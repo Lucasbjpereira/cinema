@@ -3,18 +3,22 @@ import 'package:cinema/components/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Filme extends StatefulWidget {
   const Filme({Key? key}) : super(key: key);
 
   @override
-  State<Filme> createState() => _FilmeState();
+  State<Filme> createState() => _filmetate();
 }
 
-class _FilmeState extends State<Filme> {
-  late List<dynamic> _filmes;
+// ignore: camel_case_types
+class _filmetate extends State<Filme> {
+  List<dynamic> _filme = []; // Initialize as an empty list
   int _selectedDateIndex = 0;
   bool _isLoading = true;
+  late int cinemaId;
+  late int filmeId;
 
   @override
   void initState() {
@@ -25,15 +29,29 @@ class _FilmeState extends State<Filme> {
   Future<void> _carregarDados() async {
     final String data = await rootBundle.loadString('assets/db.json');
     final Map<String, dynamic> json = jsonDecode(data);
-    setState(() {
-      _filmes = json['cinemas'][0]['filmes'];
-      _isLoading = false;
-    });
+    SharedPreferences? localStorage;
+    localStorage = await SharedPreferences.getInstance();
+    cinemaId = localStorage.getInt('selectedCinemaId') ?? 0;
+    filmeId = localStorage.getInt('selectedMovieId') ?? 0;
+
+    for (var cinema in json['cinemas']) {
+      if (cinema['id'] == cinemaId) {
+        for (var filme in cinema['filmes']) {
+          if (filme['id'] == filmeId) {
+            setState(() {
+              _filme = [filme];
+              _isLoading = false;
+            });
+            break;
+          }
+        }
+      }
+    }
   }
 
   void _updateSelectedDate(int id) {
     final int selectedIndex =
-        _filmes[0]['sessoes'].indexWhere((sessao) => sessao['id'] == id);
+        _filme[0]['sessoes'].indexWhere((sessao) => sessao['id'] == id);
     setState(() {
       _selectedDateIndex = selectedIndex != -1 ? selectedIndex : 0;
     });
@@ -49,7 +67,8 @@ class _FilmeState extends State<Filme> {
       );
     }
 
-    final filme = _filmes[0];
+    final Map<String, dynamic> filme = _filme[0];
+    _filme[0];
     final String imageUrl = filme['image'];
     final String titulo = filme['name'];
     final String genero = filme['genero'];

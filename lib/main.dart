@@ -1,4 +1,4 @@
-import 'package:cinema/search_cinema.dart';
+import 'package:cinema/splash.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -14,7 +14,7 @@ class AppWidget extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Cinema",
-      home: SearchCinema(),
+      home: SplashScreen(),
     );
   }
 }

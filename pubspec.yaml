@@ -69,6 +69,7 @@ flutter:
     - assets/imgs/home.png
     - assets/imgs/search-cine.png
     - assets/imgs/sessions.png
+    - assets/imgs/logo.png
     - assets/db.json
     - assets/regioes.json
   #   - images/a_dot_ham.jpeg
