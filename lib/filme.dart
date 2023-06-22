@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:cinema/components/menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/intl.dart';
 
 class Filme extends StatefulWidget {
   const Filme({Key? key}) : super(key: key);
@@ -59,6 +61,7 @@ class _FilmeState extends State<Filme> {
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      backgroundColor: const Color(0xFF1E1E1E),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -70,101 +73,172 @@ class _FilmeState extends State<Filme> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            Container(
-              height: 300,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
+            Column(
+              children: [
+                Container(
+                  height: 450,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    titulo,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              titulo,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: _buildFilmInfoRow(
+                                  genero, duracao, classificacao)),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Sinopse',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          const SizedBox(
+                              height:
+                                  10), // Espaçamento entre o texto e o underline
+                          Container(
+                            width: double.infinity,
+                            height: 2,
+                            color: const Color(0xFF6FBEFC),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        sinopse,
+                        textAlign: TextAlign.justify,
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                      const SizedBox(height: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Programação:',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          const SizedBox(
+                              height:
+                                  10), // Espaçamento entre o texto e o underline
+                          Container(
+                            width: double.infinity,
+                            height: 2,
+                            color: const Color(0xFF6FBEFC),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      _buildDateSelector(sessoes),
+                      const SizedBox(height: 20),
+                      _buildSessionsList(sessoes),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  _buildFilmInfoRow(genero, duracao, classificacao),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Sinopse',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    sinopse,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Datas disponíveis:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildDateSelector(sessoes),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Sessões:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildSessionsList(sessoes),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: const SizedBox(
+        height: 60, // Defina a altura desejada para o menu
+        child: Menu(),
       ),
     );
   }
 
   Widget _buildFilmInfoRow(
       String genero, String duracao, String classificacao) {
+    Color getClassificationColor(String classification) {
+      int? classificationInt = int.tryParse(classification);
+      if (classificationInt != null) {
+        if (classificationInt >= 18) {
+          return Colors.red;
+        } else if (classificationInt >= 12) {
+          return const Color(0xFFFF9600);
+        }
+      }
+      return Colors.green;
+    }
+
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildInfoItem('Gênero', genero),
-        const SizedBox(width: 10),
-        _buildInfoItem('Duração', duracao),
-        const SizedBox(width: 10),
-        _buildInfoItem('Classificação', classificacao),
+        _buildInfoItem(genero),
+        _buildVerticalDivider(),
+        _buildInfoItem(duracao),
+        _buildVerticalDivider(),
+        Container(
+          decoration: BoxDecoration(
+            color: getClassificationColor(classificacao),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          padding: const EdgeInsets.all(5),
+          child: Text(
+            classificacao,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildInfoItem(String label, String value) {
+  Widget _buildVerticalDivider() {
+    return Container(
+      height: 8,
+      width: 1,
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+    );
+  }
+
+  Widget _buildInfoItem(String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
           value,
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ],
     );
@@ -189,11 +263,12 @@ class _FilmeState extends State<Filme> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: entry.key == _selectedDateIndex
-                        ? Colors.blue
+                        ? const Color(0xFF6FBEFC)
                         : Colors.grey[300],
                   ),
                   child: Text(
-                    entry.value['data'],
+                    DateFormat('dd/MM')
+                        .format(DateTime.parse(entry.value['data'])),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: entry.key == _selectedDateIndex
@@ -217,14 +292,6 @@ class _FilmeState extends State<Filme> {
 
     return Column(
       children: [
-        Text(
-          sessoes[_selectedDateIndex]['data'],
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
         Column(
           children: selectedSessoes
               .map<Widget>((sala) => _buildSessionItem(sala))
@@ -237,11 +304,12 @@ class _FilmeState extends State<Filme> {
 
   Widget _buildSessionItem(Map<String, dynamic> sala) {
     return Container(
+      width: double.infinity,
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.grey[200],
+        color: const Color.fromARGB(192, 17, 17, 17),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,22 +319,32 @@ class _FilmeState extends State<Filme> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 5),
           Text(
             'Dublado: ${sala['dublado'] ? 'Sim' : 'Não'}',
-            style: const TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14, color: Colors.white),
           ),
           Text(
             '3D: ${sala['3d'] ? 'Sim' : 'Não'}',
-            style: const TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 14, color: Colors.white),
           ),
           const SizedBox(height: 5),
           Wrap(
             spacing: 10,
             children: sala['horarios']
                 .map<Widget>((horario) => Chip(
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(5), // Define o raio desejado
+                      ),
+                      backgroundColor: const Color(0xFF590A0A),
+                      labelStyle: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
                       label: Text(horario['horario']),
                     ))
                 .toList(),
