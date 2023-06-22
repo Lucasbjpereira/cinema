@@ -1,0 +1,65 @@
+{
+    "regioes": [
+        {
+            "id": 1,
+            "name": "Região Metropolitana de São Paulo"
+        },
+        {
+            "id": 2,
+            "name": "Região Metropolitana de Campinas"
+        },
+        {
+            "id": 3,
+            "name": "Região Metropolitana de Ribeirão Preto"
+        },
+        {
+            "id": 4,
+            "name": "Região Metropolitana de São José do Rio Preto"
+        }, {
+            "id": 5,
+            "name": "Região Metropolitana de Sorocaba"
+        }, {
+            "id": 6,
+            "name": "Região Metropolitana de Baixada Santista"
+        }, {
+            "id": 7,
+            "name": "Região Metropolitana de Vale do Paraíba e Litoral Norte"
+        }, {
+            "id": 8,
+            "name": "Região Metropolitana de Araçatuba"
+        }, {
+            "id": 9,
+            "name": "Região Metropolitana de Araraquara"
+        }, {
+            "id": 10,
+            "name": "Região Metropolitana de Assis"
+        }, {
+            "id": 11,
+            "name": "Região Metropolitana de Bauru"
+        }, {
+            "id": 12,
+            "name": "Região Metropolitana de Marília"
+        }, {
+            "id": 13,
+            "name": "Região Metropolitana de Presidente Prudente"
+        }, {
+            "id": 14,
+            "name": "Região Metropolitana de Registro"
+        }, {
+            "id": 15,
+            "name": "Região Metropolitana de São José dos Campos"
+        }, {
+            "id": 16,
+            "name": "Região Metropolitana de Piracicaba"
+        }, {
+            "id": 17,
+            "name": "Região Metropolitana de Franca"
+        }, {
+            "id": 18,
+            "name": "Região Metropolitana de Itapetininga"
+        }, {
+            "id": 19,
+            "name": "Região Metropolitana de Itapeva"
+        }
+    ]
+}

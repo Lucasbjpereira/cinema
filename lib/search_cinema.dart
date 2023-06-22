@@ -17,11 +17,14 @@ class _SearchCinemaState extends State<SearchCinema> {
   List<dynamic> cinemasData = [];
   int? selectedCinemaId;
   SharedPreferences? localStorage;
+  String? selectedRegion;
+  List<dynamic> regionsData = [];
 
   @override
   void initState() {
     super.initState();
     loadCinemasData();
+    loadRegionsData();
     initializeSharedPreferences();
   }
 
@@ -30,6 +33,14 @@ class _SearchCinemaState extends State<SearchCinema> {
     final data = jsonDecode(jsonString);
     setState(() {
       cinemasData = data['cinemas'];
+    });
+  }
+
+  Future<void> loadRegionsData() async {
+    final jsonString = await rootBundle.loadString('assets/regioes.json');
+    final data = jsonDecode(jsonString);
+    setState(() {
+      regionsData = data['regioes'];
     });
   }
 
@@ -45,6 +56,74 @@ class _SearchCinemaState extends State<SearchCinema> {
       selectedCinemaId = cinemaId;
       localStorage!.setInt('selectedCinemaId', cinemaId);
     });
+  }
+
+  void selectRegion(String? regionName) {
+    setState(() {
+      selectedRegion = regionName;
+    });
+  }
+
+  void openRegionModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: const Color(0xFF111111),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Filtrar por região',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFD9D9D9),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+              DropdownButton<String>(
+                value: selectedRegion,
+                hint: const Text('Selecione uma região'),
+                dropdownColor: const Color(0xFF111111),
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFFD9D9D9),
+                ),
+                items: regionsData.map((region) {
+                  final String regionName = region['name'];
+                  return DropdownMenuItem<String>(
+                    value: regionName,
+                    child: Text(regionName),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    //set state will update UI and State of your App
+                    selectedRegion = newValue.toString();
+                  });
+                  selectRegion(newValue);
+                  Navigator.pop(context);
+                  openRegionModal(context);
+                },
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Salvar Região'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -64,16 +143,21 @@ class _SearchCinemaState extends State<SearchCinema> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Filtrar por região',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFFD9D9D9),
-                          decoration: TextDecoration.underline,
+                    GestureDetector(
+                      onTap: () {
+                        openRegionModal(context);
+                      },
+                      child: const Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Filtrar por região',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFFD9D9D9),
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ),
@@ -153,13 +237,12 @@ class _SearchCinemaState extends State<SearchCinema> {
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                const Color(0xFF111111),
-                                            side: BorderSide(
+                                                selectedCinemaId == cinemaId
+                                                    ? const Color(0xFF590A0A)
+                                                    : const Color(0xFF111111),
+                                            side: const BorderSide(
                                               width: 2,
-                                              color:
-                                                  selectedCinemaId == cinemaId
-                                                      ? const Color(0xFF590A0A)
-                                                      : Colors.transparent,
+                                              color: Color(0xFF590A0A),
                                             ),
                                           ),
                                           onPressed: () {

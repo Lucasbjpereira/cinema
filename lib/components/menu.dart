@@ -1,7 +1,9 @@
+import 'package:cinema/cinema.dart';
+import 'package:cinema/search_cinema.dart';
 import 'package:flutter/material.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({super.key});
+  const Menu({Key? key}) : super(key: key);
 
   @override
   State<Menu> createState() => _MenuState();
@@ -35,14 +37,24 @@ class _MenuState extends State<Menu> {
               icon: Image.asset(
                   'assets/imgs/home.png'), // Caminho para o ícone no diretório de assets
               onPressed: () {
-                // Ação quando o ícone for pressionado
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Cinema(),
+                  ),
+                );
               },
             ),
             IconButton(
               icon: Image.asset(
                   'assets/imgs/search-cine.png'), // Caminho para o ícone no diretório de assets
               onPressed: () {
-                // Ação quando o ícone for pressionado
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SearchCinema(),
+                  ),
+                );
               },
             ),
           ],

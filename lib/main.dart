@@ -1,4 +1,4 @@
-import 'package:cinema/filme.dart';
+import 'package:cinema/cinema.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -13,7 +13,7 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: "Cinema",
-      home: Filme(),
+      home: Cinema(),
     );
   }
 }

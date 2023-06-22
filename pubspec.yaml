@@ -40,6 +40,7 @@ dependencies:
   intl: ^0.18.1
   http: ^1.0.0
   shared_preferences: ^2.1.2
+  flutter_dropdown: ^1.0.1+hotfix.1
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,7 @@ flutter:
     - assets/imgs/home.png
     - assets/imgs/search-cine.png
     - assets/db.json
+    - assets/regioes.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
