@@ -262,6 +262,7 @@ class _SearchCinemaState extends State<SearchCinema> {
                         suffixIcon: const Icon(Icons.search),
                         suffixIconColor: const Color(0x7CD9D9D9),
                         hintStyle: const TextStyle(
+                          fontFamily: 'Inter',
                           color: Color(0x7CD9D9D9), // Cor do hintText
                         ),
                         contentPadding: const EdgeInsets.symmetric(

@@ -118,6 +118,7 @@ class _filmetate extends State<Filme> {
                               titulo,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
+                                fontFamily: 'Inter',
                                 color: Colors.white,
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold,
@@ -142,6 +143,7 @@ class _filmetate extends State<Filme> {
                           const Text(
                             'Sinopse',
                             style: TextStyle(
+                                fontFamily: 'Inter',
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
@@ -160,8 +162,10 @@ class _filmetate extends State<Filme> {
                       Text(
                         sinopse,
                         textAlign: TextAlign.justify,
-                        style:
-                            const TextStyle(fontSize: 16, color: Colors.white),
+                        style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 16,
+                            color: Colors.white),
                       ),
                       const SizedBox(height: 20),
                       Column(
@@ -170,6 +174,7 @@ class _filmetate extends State<Filme> {
                           const Text(
                             'Programação:',
                             style: TextStyle(
+                                fontFamily: 'Inter',
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white),
@@ -233,6 +238,7 @@ class _filmetate extends State<Filme> {
           child: Text(
             classificacao,
             style: const TextStyle(
+              fontFamily: 'Inter',
               fontSize: 14,
               color: Colors.white,
             ),
@@ -257,7 +263,8 @@ class _filmetate extends State<Filme> {
       children: [
         Text(
           value,
-          style: const TextStyle(fontSize: 16, color: Colors.white),
+          style: const TextStyle(
+              fontFamily: 'Inter', fontSize: 16, color: Colors.white),
         ),
       ],
     );
@@ -289,6 +296,7 @@ class _filmetate extends State<Filme> {
                     DateFormat('dd/MM')
                         .format(DateTime.parse(entry.value['data'])),
                     style: TextStyle(
+                      fontFamily: 'Inter',
                       fontSize: 14,
                       fontWeight: entry.key == _selectedDateIndex
                           ? FontWeight.bold
@@ -336,6 +344,7 @@ class _filmetate extends State<Filme> {
           Text(
             sala['nome'],
             style: const TextStyle(
+              fontFamily: 'Inter',
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -344,11 +353,13 @@ class _filmetate extends State<Filme> {
           const SizedBox(height: 5),
           Text(
             'Dublado: ${sala['dublado'] ? 'Sim' : 'Não'}',
-            style: const TextStyle(fontSize: 14, color: Colors.white),
+            style: const TextStyle(
+                fontFamily: 'Inter', fontSize: 14, color: Colors.white),
           ),
           Text(
             '3D: ${sala['3d'] ? 'Sim' : 'Não'}',
-            style: const TextStyle(fontSize: 14, color: Colors.white),
+            style: const TextStyle(
+                fontFamily: 'Inter', fontSize: 14, color: Colors.white),
           ),
           const SizedBox(height: 5),
           Wrap(
@@ -361,6 +372,7 @@ class _filmetate extends State<Filme> {
                       ),
                       backgroundColor: const Color(0xFF590A0A),
                       labelStyle: const TextStyle(
+                        fontFamily: 'Inter',
                         fontSize: 14,
                         color: Colors.white,
                       ),

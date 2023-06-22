@@ -113,6 +113,7 @@ class _CinemaState extends State<Cinema> {
                                 suffixIcon: const Icon(Icons.search),
                                 suffixIconColor: const Color(0x7CD9D9D9),
                                 hintStyle: const TextStyle(
+                                  fontFamily: 'Inter',
                                   color: Color(0x7CD9D9D9), // Cor do hintText
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
@@ -210,6 +211,8 @@ class _CinemaState extends State<Cinema> {
                                                                   item.title,
                                                                   style:
                                                                       const TextStyle(
+                                                                    fontFamily:
+                                                                        'Inter',
                                                                     color: Colors
                                                                         .white,
                                                                     fontSize:
@@ -297,6 +300,7 @@ class _CinemaState extends State<Cinema> {
                                                     child: const Text(
                                                       'Em cartaz',
                                                       style: TextStyle(
+                                                        fontFamily: 'Inter',
                                                         fontSize: 18,
                                                         color: Colors.white,
                                                       ),
@@ -323,6 +327,7 @@ class _CinemaState extends State<Cinema> {
                                                     child: const Text(
                                                       'Em cartaz',
                                                       style: TextStyle(
+                                                        fontFamily: 'Inter',
                                                         fontSize: 18,
                                                         color: Colors.white,
                                                       ),
@@ -359,6 +364,7 @@ class _CinemaState extends State<Cinema> {
                                                     child: const Text(
                                                       'Em breve',
                                                       style: TextStyle(
+                                                        fontFamily: 'Inter',
                                                         fontSize: 18,
                                                         color: Colors.white,
                                                       ),
@@ -385,6 +391,7 @@ class _CinemaState extends State<Cinema> {
                                                     child: const Text(
                                                       'Em breve',
                                                       style: TextStyle(
+                                                        fontFamily: 'Inter',
                                                         fontSize: 18,
                                                         color: Colors.white,
                                                       ),
@@ -478,6 +485,7 @@ class _CinemaState extends State<Cinema> {
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
+                        fontFamily: 'Inter',
                         color: Color.fromARGB(255, 255, 255, 255),
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -548,6 +556,7 @@ class _CinemaState extends State<Cinema> {
                       movie.title,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
+                        fontFamily: 'Inter',
                         color: Color.fromARGB(255, 255, 255, 255),
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -623,6 +632,7 @@ class _CinemaState extends State<Cinema> {
                       movie.title,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
+                        fontFamily: 'Inter',
                         color: Color.fromARGB(255, 255, 255, 255),
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

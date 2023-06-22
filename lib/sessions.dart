@@ -162,6 +162,7 @@ class _SessionsState extends State<Sessions> {
       child: Text(
         classification,
         style: const TextStyle(
+          fontFamily: 'Inter',
           color: Colors.white,
           fontSize: 14,
         ),
@@ -225,6 +226,7 @@ class _SessionsState extends State<Sessions> {
                                   child: Text(
                                     '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}',
                                     style: TextStyle(
+                                      fontFamily: 'Inter',
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: isSelected
@@ -257,6 +259,7 @@ class _SessionsState extends State<Sessions> {
                         child: Text(
                           'Não foram encontradas sessões da data selecionada.',
                           style: TextStyle(
+                            fontFamily: 'Inter',
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(96, 255, 255, 255),
@@ -317,12 +320,16 @@ class _SessionsState extends State<Sessions> {
                               const Text(
                                 'Gênero: ',
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.white),
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    color: Colors.white),
                               ),
                               Text(
                                 session.movieGenre,
                                 style: const TextStyle(
-                                    fontSize: 14, color: Color(0xFFFF9600)),
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    color: Color(0xFFFF9600)),
                               ),
                             ],
                           ),
@@ -332,12 +339,16 @@ class _SessionsState extends State<Sessions> {
                               const Text(
                                 'Duração: ',
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.white),
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    color: Colors.white),
                               ),
                               Text(
                                 session.movieDuration,
                                 style: const TextStyle(
-                                    fontSize: 14, color: Color(0xFFFF9600)),
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    color: Color(0xFFFF9600)),
                               ),
                             ],
                           ),
@@ -347,7 +358,9 @@ class _SessionsState extends State<Sessions> {
                               const Text(
                                 'Classificação: ',
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.white),
+                                    fontFamily: 'Inter',
+                                    fontSize: 14,
+                                    color: Colors.white),
                               ),
                               _buildClassificationContainer(
                                   session.movieClassification),
@@ -362,6 +375,7 @@ class _SessionsState extends State<Sessions> {
                           Text(
                             session.movieTitle,
                             style: const TextStyle(
+                              fontFamily: 'Inter',
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -379,6 +393,7 @@ class _SessionsState extends State<Sessions> {
                                           Text(
                                             room.name,
                                             style: const TextStyle(
+                                              fontFamily: 'Inter',
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -388,6 +403,7 @@ class _SessionsState extends State<Sessions> {
                                           Text(
                                             'Dublado: ${room.isDubbed ? "Sim" : "Não"}',
                                             style: const TextStyle(
+                                              fontFamily: 'Inter',
                                               color: Colors.white,
                                             ),
                                           ),
@@ -395,6 +411,7 @@ class _SessionsState extends State<Sessions> {
                                           Text(
                                             '3D: ${room.is3D ? "Sim" : "Não"}',
                                             style: const TextStyle(
+                                              fontFamily: 'Inter',
                                               color: Colors.white,
                                             ),
                                           ),
@@ -417,6 +434,7 @@ class _SessionsState extends State<Sessions> {
                                                       child: Text(
                                                         time.time,
                                                         style: const TextStyle(
+                                                          fontFamily: 'Inter',
                                                           color: Colors.white,
                                                         ),
                                                       ),
