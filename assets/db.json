@@ -20,7 +20,7 @@
                     "sessoes": [
                         {
                             "id": 1,
-                            "data": "2021-08-05",
+                            "data": "2023-06-21",
                             "salas": [
                                 {
                                     "id": 1,
@@ -128,7 +128,118 @@
                                     ]
                                 }
                             ]
-                        }
+                        },
+                        {
+                            "id": 2,
+                            "data": "2023-06-22",
+                            "salas": [
+                                {
+                                    "id": 1,
+                                    "nome": "Sala 3",
+                                    "dublado": true,
+                                    "3d": true,
+                                    "horarios": [
+                                        {
+                                            "id": 21,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 22,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 23,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 24,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 25,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }, {
+                                    "id": 2,
+                                    "nome": "Sala 2",
+                                    "dublado": false,
+                                    "3d": false,
+                                    "horarios": [
+                                        {
+                                            "id": 26,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 27,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 28,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 29,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 30,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }, {
+                                    "id": 3,
+                                    "nome": "Sala 1",
+                                    "dublado": true,
+                                    "3d": false,
+                                    "horarios": [
+                                        {
+                                            "id": 31,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 32,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 33,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 34,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 35,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }, {
+                                    "id": 4,
+                                    "nome": "Sala 4",
+                                    "dublado": false,
+                                    "3d": true,
+                                    "horarios": [
+                                        {
+                                            "id": 36,
+                                            "horario": "14:00"
+                                        },
+                                        {
+                                            "id": 37,
+                                            "horario": "16:00"
+                                        },
+                                        {
+                                            "id": 38,
+                                            "horario": "18:00"
+                                        },
+                                        {
+                                            "id": 39,
+                                            "horario": "20:00"
+                                        }, {
+                                            "id": 40,
+                                            "horario": "22:00"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }    
                     ]
                 },
                 {

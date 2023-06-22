@@ -1,45 +1,62 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class Filme extends StatefulWidget {
-  const Filme({super.key});
+  const Filme({Key? key}) : super(key: key);
 
   @override
   State<Filme> createState() => _FilmeState();
 }
 
 class _FilmeState extends State<Filme> {
-// Variáveis fictícias para simular os dados do filme
-  final String _imageUrl =
-      'https://example.com/filme.jpg'; // URL da imagem fictícia
-  final String _titulo = 'Título do Filme';
-  final String _genero = 'Ação';
-  final String _duracao = '2h 30min';
-  final String _classificacao = '18+';
-  final String _sinopse =
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo aliquam neque vitae vulputate.';
-  final List<String> _datas = ['22/05', '23/05', '24/05'];
-  final List<Map<String, dynamic>> _sessoes = [
-    {
-      'sala': 'Sala 1',
-      'idioma': 'Dublado',
-      'horarios': ['10:00', '12:30', '15:00']
-    },
-    {
-      'sala': 'Sala 2',
-      'idioma': 'Legendado',
-      'horarios': ['11:00', '13:30', '16:00']
-    },
-    {
-      'sala': 'Sala 3',
-      'idioma': 'Dublado',
-      'horarios': ['14:00', '16:30', '19:00']
-    },
-  ];
-
+  late List<dynamic> _filmes;
   int _selectedDateIndex = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarDados();
+  }
+
+  Future<void> _carregarDados() async {
+    final String data = await rootBundle.loadString('assets/db.json');
+    final Map<String, dynamic> json = jsonDecode(data);
+    setState(() {
+      _filmes = json['cinemas'][0]['filmes'];
+      _isLoading = false;
+    });
+  }
+
+  void _updateSelectedDate(int id) {
+    final int selectedIndex =
+        _filmes[0]['sessoes'].indexWhere((sessao) => sessao['id'] == id);
+    setState(() {
+      _selectedDateIndex = selectedIndex != -1 ? selectedIndex : 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    final filme = _filmes[0];
+    final String imageUrl = filme['image'];
+    final String titulo = filme['name'];
+    final String genero = filme['genero'];
+    final String duracao = filme['duracao'];
+    final String classificacao = filme['classificacao'];
+    final String sinopse = filme['sinopse'];
+    final List<Map<String, dynamic>> sessoes =
+        List<Map<String, dynamic>>.from(filme['sessoes']);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -60,7 +77,7 @@ class _FilmeState extends State<Filme> {
               height: 300,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(_imageUrl),
+                  image: NetworkImage(imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -71,41 +88,47 @@ class _FilmeState extends State<Filme> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _titulo,
+                    titulo,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _buildFilmInfoRow(_genero, _duracao, _classificacao),
+                  _buildFilmInfoRow(genero, duracao, classificacao),
                   const SizedBox(height: 20),
                   const Text(
                     'Sinopse',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    _sinopse,
+                    sinopse,
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Programação',
+                    'Datas disponíveis:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  _buildDatesList(),
+                  _buildDateSelector(sessoes),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Sessões:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 10),
-                  _buildFilmSessions(),
+                  _buildSessionsList(sessoes),
                 ],
               ),
             ),
@@ -115,95 +138,141 @@ class _FilmeState extends State<Filme> {
     );
   }
 
-  Widget _buildFilmInfoRow(String genre, String time, String rating) {
+  Widget _buildFilmInfoRow(
+      String genero, String duracao, String classificacao) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(genre),
-        Text(time),
-        Text(rating),
+        _buildInfoItem('Gênero', genero),
+        const SizedBox(width: 10),
+        _buildInfoItem('Duração', duracao),
+        const SizedBox(width: 10),
+        _buildInfoItem('Classificação', classificacao),
       ],
     );
   }
 
-  Widget _buildDatesList() {
-    return SizedBox(
-      height: 50,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _datas.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-            onTap: () {
-              setState(() {
-                _selectedDateIndex = index;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: _selectedDateIndex == index
-                      ? Colors.blue
-                      : Colors.transparent,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Center(
-                child: Text(
-                  _datas[index],
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: _selectedDateIndex == index
+  Widget _buildInfoItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateSelector(List<Map<String, dynamic>> sessoes) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: sessoes
+            .asMap()
+            .entries
+            .map(
+              (entry) => GestureDetector(
+                onTap: () {
+                  _updateSelectedDate(entry.value['id']);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: entry.key == _selectedDateIndex
                         ? Colors.blue
-                        : Colors.black,
+                        : Colors.grey[300],
+                  ),
+                  child: Text(
+                    entry.value['data'],
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: entry.key == _selectedDateIndex
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: entry.key == _selectedDateIndex
+                          ? Colors.white
+                          : Colors.black,
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            )
+            .toList(),
       ),
     );
   }
 
-  Widget _buildFilmSessions() {
-    List<Widget> sessionWidgets = [];
-
-    for (int i = 0; i < _sessoes.length; i++) {
-      Map<String, dynamic> sessao = _sessoes[i];
-
-      Widget sessionWidget = Column(
-        children: [
-          ListTile(
-            leading: Text(sessao['sala']),
-            title: Text(sessao['idioma']),
-            subtitle: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: sessao['horarios']
-                      .map<Widget>((horario) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Text(horario),
-                          ))
-                      .toList(),
-                ),
-                const Text('Outra sessão'),
-              ],
-            ),
-          ),
-          const Divider(),
-        ],
-      );
-
-      sessionWidgets.add(sessionWidget);
-    }
+  Widget _buildSessionsList(List<Map<String, dynamic>> sessoes) {
+    final List<dynamic> selectedSessoes = sessoes[_selectedDateIndex]['salas'];
 
     return Column(
-      children: sessionWidgets,
+      children: [
+        Text(
+          sessoes[_selectedDateIndex]['data'],
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Column(
+          children: selectedSessoes
+              .map<Widget>((sala) => _buildSessionItem(sala))
+              .toList(),
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _buildSessionItem(Map<String, dynamic> sala) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.grey[200],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            sala['nome'],
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'Dublado: ${sala['dublado'] ? 'Sim' : 'Não'}',
+            style: const TextStyle(fontSize: 14),
+          ),
+          Text(
+            '3D: ${sala['3d'] ? 'Sim' : 'Não'}',
+            style: const TextStyle(fontSize: 14),
+          ),
+          const SizedBox(height: 5),
+          Wrap(
+            spacing: 10,
+            children: sala['horarios']
+                .map<Widget>((horario) => Chip(
+                      label: Text(horario['horario']),
+                    ))
+                .toList(),
+          ),
+        ],
+      ),
     );
   }
 }
