@@ -1589,7 +1589,10 @@
             "name": "Roxy",
             "regiao": 6,
             "endereco": "Av. Ana Costa 443, Santos, SP, 11060-002",
-            "image": "https://www.exibidor.com.br/fotos/noticias/notundefined_1552661611.png"
+            "image": "https://www.exibidor.com.br/fotos/noticias/notundefined_1552661611.png",
+            "filmes": [
+                
+            ]
         }, {
             "id": 3,
             "name": "Cineflix",
