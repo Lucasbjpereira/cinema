@@ -15,6 +15,7 @@ class Cinema extends StatefulWidget {
 }
 
 class _CinemaState extends State<Cinema> {
+  bool isLoading = true;
   int _currentSlideIndex = 0;
   String _currentCategory = 'Em cartaz';
   List<Movie> movies = [];
@@ -60,6 +61,7 @@ class _CinemaState extends State<Cinema> {
 
     setState(() {
       movies = cinemaData.movies;
+      isLoading = false;
     });
   }
 
@@ -71,333 +73,342 @@ class _CinemaState extends State<Cinema> {
       backgroundColor: const Color(0xFF111111),
       body: Stack(
         children: [
-          movies.isEmpty
-              ? const Center(
-                  child: Column(children: [
-                    Spacer(),
-                    Text('Nenhum filme encontrado',
-                        style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: Color.fromARGB(120, 255, 255, 255))),
-                    Spacer()
-                  ]),
-                )
-              : ListView(
-                  children: [
-                    const Header(),
-                    Padding(
-                      padding: const EdgeInsets.all(11.0),
-                      child: Column(
-                        children: [
-                          TextField(
-                            controller: searchController,
-                            style: const TextStyle(
+          if (isLoading) // Exibe o indicador de loading enquanto isLoading for verdadeiro
+            Center(
+              child: CircularProgressIndicator(),
+            )
+          else
+            movies.isEmpty
+                ? const Center(
+                    child: Column(children: [
+                      Spacer(),
+                      Text('Nenhum filme encontrado',
+                          style: TextStyle(
                               fontFamily: 'Inter',
-                              fontSize: 16,
+                              fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFFD9D9D9), // Cor do texto digitado
+                              color: Color.fromARGB(120, 255, 255, 255))),
+                      Spacer()
+                    ]),
+                  )
+                : ListView(
+                    children: [
+                      const Header(),
+                      Padding(
+                        padding: const EdgeInsets.all(11.0),
+                        child: Column(
+                          children: [
+                            TextField(
+                              controller: searchController,
+                              style: const TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color:
+                                    Color(0xFFD9D9D9), // Cor do texto digitado
+                              ),
+                              decoration: InputDecoration(
+                                filled: false,
+                                hintText: 'Pesquisar',
+                                suffixIcon: const Icon(Icons.search),
+                                suffixIconColor: const Color(0x7CD9D9D9),
+                                hintStyle: const TextStyle(
+                                  color: Color(0x7CD9D9D9), // Cor do hintText
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFD9D9D9),
+                                  ), // Cor da borda quando não está em foco
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: const BorderSide(
+                                      color: Color(
+                                          0xFFD9D9D9)), // Cor da borda ao focar
+                                ),
+                              ),
                             ),
-                            decoration: InputDecoration(
-                              filled: false,
-                              hintText: 'Pesquisar',
-                              suffixIcon: const Icon(Icons.search),
-                              suffixIconColor: const Color(0x7CD9D9D9),
-                              hintStyle: const TextStyle(
-                                color: Color(0x7CD9D9D9), // Cor do hintText
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 16),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFD9D9D9),
-                                ), // Cor da borda quando não está em foco
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                borderSide: const BorderSide(
-                                    color: Color(
-                                        0xFFD9D9D9)), // Cor da borda ao focar
-                              ),
+                            const SizedBox(
+                              height: 10,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          filteredMovieData.isNotEmpty
-                              ? _buildFiltredMovies()
-                              : Column(
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        CarouselSlider(
-                                          options: CarouselOptions(
-                                            height: 250,
-                                            viewportFraction: 1.0,
-                                            enableInfiniteScroll: true,
-                                            autoPlay: true,
-                                            onPageChanged: (index, reason) {
-                                              setState(() {
-                                                _currentSlideIndex = index;
-                                              });
-                                            },
-                                          ),
-                                          items: slideMovies.map((item) {
-                                            return Builder(
-                                              builder: (BuildContext context) {
-                                                return GestureDetector(
-                                                  onTap: () async {
-                                                    SharedPreferences prefs =
-                                                        await SharedPreferences
-                                                            .getInstance();
-                                                    prefs.setInt(
-                                                        'selectedMovieId',
-                                                        item.id);
-                                                    // ignore: use_build_context_synchronously
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            const Filme(),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                        Radius.circular(10.0),
-                                                      ),
-                                                      child: Stack(
-                                                        children: [
-                                                          Image.network(
-                                                            item.imageURL,
-                                                            fit: BoxFit.cover,
-                                                            width:
-                                                                double.infinity,
-                                                          ),
-                                                          Positioned(
-                                                            left: 0,
-                                                            right: 0,
-                                                            bottom: 35.0,
-                                                            child: Container(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  vertical:
-                                                                      10.0,
-                                                                  horizontal:
-                                                                      10.0),
-                                                              color: Colors
-                                                                  .black
-                                                                  .withOpacity(
-                                                                      0.7),
-                                                              child: Text(
-                                                                item.title,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize:
-                                                                      18.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                            filteredMovieData.isNotEmpty
+                                ? _buildFiltredMovies()
+                                : Column(
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          CarouselSlider(
+                                            options: CarouselOptions(
+                                              height: 250,
+                                              viewportFraction: 1.0,
+                                              enableInfiniteScroll: true,
+                                              autoPlay: true,
+                                              onPageChanged: (index, reason) {
+                                                setState(() {
+                                                  _currentSlideIndex = index;
+                                                });
+                                              },
+                                            ),
+                                            items: slideMovies.map((item) {
+                                              return Builder(
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return GestureDetector(
+                                                    onTap: () async {
+                                                      SharedPreferences prefs =
+                                                          await SharedPreferences
+                                                              .getInstance();
+                                                      prefs.setInt(
+                                                          'selectedMovieId',
+                                                          item.id);
+                                                      // ignore: use_build_context_synchronously
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const Filme(),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      margin:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                          Radius.circular(10.0),
+                                                        ),
+                                                        child: Stack(
+                                                          children: [
+                                                            Image.network(
+                                                              item.imageURL,
+                                                              fit: BoxFit.cover,
+                                                              width: double
+                                                                  .infinity,
+                                                            ),
+                                                            Positioned(
+                                                              left: 0,
+                                                              right: 0,
+                                                              bottom: 35.0,
+                                                              child: Container(
+                                                                padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                    vertical:
+                                                                        10.0,
+                                                                    horizontal:
+                                                                        10.0),
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.7),
+                                                                child: Text(
+                                                                  item.title,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        18.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
                                                                 ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            }).toList(),
+                                          ),
+                                          Positioned(
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 16.0,
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: List.generate(
+                                                    slideMovies.length,
+                                                    (index) {
+                                                  return Container(
+                                                    width: 10.0,
+                                                    height: 10.0,
+                                                    margin: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 4.0),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color:
+                                                          _currentSlideIndex ==
+                                                                  index
+                                                              ? Colors.red
+                                                              : Colors.grey,
+                                                    ),
+                                                  );
+                                                }),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                            const SizedBox(height: 20),
+                            filteredMovieData.isEmpty
+                                ? Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          child: _currentCategory == 'Em cartaz'
+                                              ? Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                    color:
+                                                        const Color(0xFF590A0A),
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _currentCategory =
+                                                            'Em cartaz';
+                                                      });
+                                                    },
+                                                    child: const Text(
+                                                      'Em cartaz',
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
                                                   ),
-                                                );
-                                              },
-                                            );
-                                          }).toList(),
-                                        ),
-                                        Positioned(
-                                          left: 0,
-                                          right: 0,
-                                          bottom: 16.0,
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: List.generate(
-                                                  slideMovies.length, (index) {
-                                                return Container(
-                                                  width: 10.0,
-                                                  height: 10.0,
-                                                  margin: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 4.0),
+                                                )
+                                              : Container(
                                                   decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: _currentSlideIndex ==
-                                                            index
-                                                        ? Colors.red
-                                                        : Colors.grey,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                    border: Border.all(
+                                                      color: const Color(
+                                                          0xFF590A0A),
+                                                    ),
                                                   ),
-                                                );
-                                              }),
-                                            ),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _currentCategory =
+                                                            'Em cartaz';
+                                                      });
+                                                    },
+                                                    child: const Text(
+                                                      'Em cartaz',
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                          const SizedBox(height: 20),
-                          filteredMovieData.isEmpty
-                              ? Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: _currentCategory == 'Em cartaz'
-                                            ? Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                  color:
-                                                      const Color(0xFF590A0A),
-                                                ),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _currentCategory =
-                                                          'Em cartaz';
-                                                    });
-                                                  },
-                                                  child: const Text(
-                                                    'Em cartaz',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                  border: Border.all(
+                                          child: _currentCategory == 'Em breve'
+                                              ? Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
                                                     color:
                                                         const Color(0xFF590A0A),
                                                   ),
-                                                ),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _currentCategory =
-                                                          'Em cartaz';
-                                                    });
-                                                  },
-                                                  child: const Text(
-                                                    'Em cartaz',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _currentCategory =
+                                                            'Em breve';
+                                                      });
+                                                    },
+                                                    child: const Text(
+                                                      'Em breve',
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                    border: Border.all(
+                                                      color: const Color(
+                                                          0xFF590A0A),
+                                                    ),
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _currentCategory =
+                                                            'Em breve';
+                                                      });
+                                                    },
+                                                    child: const Text(
+                                                      'Em breve',
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Colors.white,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
                                         ),
-                                        child: _currentCategory == 'Em breve'
-                                            ? Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                  color:
-                                                      const Color(0xFF590A0A),
-                                                ),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _currentCategory =
-                                                          'Em breve';
-                                                    });
-                                                  },
-                                                  child: const Text(
-                                                    'Em breve',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                  border: Border.all(
-                                                    color:
-                                                        const Color(0xFF590A0A),
-                                                  ),
-                                                ),
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _currentCategory =
-                                                          'Em breve';
-                                                    });
-                                                  },
-                                                  child: const Text(
-                                                    'Em breve',
-                                                    style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
                                       ),
-                                    ),
-                                  ],
-                                )
-                              : const SizedBox(),
-                          const SizedBox(height: 20),
-                          if (filteredMovieData.isEmpty &&
-                              _currentCategory == 'Em cartaz')
-                            _buildEmCartazCards(),
-                          if (filteredMovieData.isEmpty &&
-                              _currentCategory != 'Em cartaz')
-                            _buildEmBreveCards(),
-                          const SizedBox(height: 60),
-                        ],
+                                    ],
+                                  )
+                                : const SizedBox(),
+                            const SizedBox(height: 20),
+                            if (filteredMovieData.isEmpty &&
+                                _currentCategory == 'Em cartaz')
+                              _buildEmCartazCards(),
+                            if (filteredMovieData.isEmpty &&
+                                _currentCategory != 'Em cartaz')
+                              _buildEmBreveCards(),
+                            const SizedBox(height: 60),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
           const Menu(),
         ],
       ),

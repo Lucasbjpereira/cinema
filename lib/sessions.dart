@@ -72,6 +72,7 @@ class Sessions extends StatefulWidget {
 }
 
 class _SessionsState extends State<Sessions> {
+  bool isLoading = true;
   DateTime selectedDate = DateTime.now();
   List<MovieSession> movies = [];
 
@@ -117,6 +118,7 @@ class _SessionsState extends State<Sessions> {
           )),
         ),
       ));
+      isLoading = false;
     });
   }
 
@@ -134,6 +136,7 @@ class _SessionsState extends State<Sessions> {
   @override
   void initState() {
     super.initState();
+    isLoading = true;
     _loadCinemaData();
   }
 
@@ -174,259 +177,267 @@ class _SessionsState extends State<Sessions> {
       backgroundColor: const Color(0xFF111111),
       body: Stack(
         children: [
-          ListView.builder(
-            itemCount: filteredSessions.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return Column(
-                  children: [
-                    const Header(),
-                    Padding(
-                      padding: const EdgeInsets.all(11.0),
-                      child: SizedBox(
-                        height: 40,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: availableDates.length,
-                          itemBuilder: (context, index) {
-                            DateTime date = availableDates[index];
-                            bool isSelected = date.year == selectedDate.year &&
-                                date.month == selectedDate.month &&
-                                date.day == selectedDate.day;
+          if (isLoading) // Exibe o indicador de loading enquanto isLoading for verdadeiro
+            Center(
+              child: CircularProgressIndicator(),
+            )
+          else
+            ListView.builder(
+              itemCount: filteredSessions.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Column(
+                    children: [
+                      const Header(),
+                      Padding(
+                        padding: const EdgeInsets.all(11.0),
+                        child: SizedBox(
+                          height: 40,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: availableDates.length,
+                            itemBuilder: (context, index) {
+                              DateTime date = availableDates[index];
+                              bool isSelected =
+                                  date.year == selectedDate.year &&
+                                      date.month == selectedDate.month &&
+                                      date.day == selectedDate.day;
 
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedDate = date;
-                                });
-                              },
-                              child: Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? const Color(0xFF6FBEFC)
-                                        : Colors.transparent,
-                                    width: 2,
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedDate = date;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? const Color(0xFF6FBEFC)
+                                          : Colors.transparent,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: isSelected
-                                        ? const Color(0xFF6FBEFC)
-                                        : Colors.white,
+                                  child: Text(
+                                    '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: isSelected
+                                          ? const Color(0xFF6FBEFC)
+                                          : Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              MovieSession session = filteredSessions[index - 1];
-              List<MovieSchedule> schedulesForDate = session.schedules
-                  .where((schedule) =>
-                      schedule.date == selectedDate.toString().split(' ')[0])
-                  .toList();
-
-              if (schedulesForDate.isEmpty) {
-                return Column(
-                  children: [
-                    SizedBox(height: 200),
-                    const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        'Não foram encontradas sessões da data selecionada.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(96, 255, 255, 255),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              return Container(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.only(bottom: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
-                              onTap: () async {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                int sessionId = session.id;
-                                sessionId;
-                                prefs.setInt('selectedMovieId', session.id);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const Filme(),
-                                  ),
-                                );
-                              },
-                              child: Image.network(
-                                session.movieImage,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                              );
+                            },
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            const Text(
-                              'Gênero: ',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            ),
-                            Text(
-                              session.movieGenre,
-                              style: const TextStyle(
-                                  fontSize: 14, color: Color(0xFFFF9600)),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            const Text(
-                              'Duração: ',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            ),
-                            Text(
-                              session.movieDuration,
-                              style: const TextStyle(
-                                  fontSize: 14, color: Color(0xFFFF9600)),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5),
-                        Row(
-                          children: [
-                            const Text(
-                              'Classificação: ',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.white),
-                            ),
-                            _buildClassificationContainer(
-                                session.movieClassification),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          session.movieTitle,
-                          style: const TextStyle(
-                            fontSize: 20,
+                      ),
+                    ],
+                  );
+                }
+
+                MovieSession session = filteredSessions[index - 1];
+                List<MovieSchedule> schedulesForDate = session.schedules
+                    .where((schedule) =>
+                        schedule.date == selectedDate.toString().split(' ')[0])
+                    .toList();
+
+                if (schedulesForDate.isEmpty) {
+                  return Column(
+                    children: [
+                      SizedBox(height: 200),
+                      const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          'Não foram encontradas sessões da data selecionada.',
+                          style: TextStyle(
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Color.fromARGB(96, 255, 255, 255),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: schedulesForDate
-                              .expand((schedule) => schedule.rooms.map(
-                                    (room) => Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          room.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+                      ),
+                    ],
+                  );
+                }
+
+                return Container(
+                  padding: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  int sessionId = session.id;
+                                  sessionId;
+                                  prefs.setInt('selectedMovieId', session.id);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Filme(),
+                                    ),
+                                  );
+                                },
+                                child: Image.network(
+                                  session.movieImage,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              const Text(
+                                'Gênero: ',
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                              Text(
+                                session.movieGenre,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Color(0xFFFF9600)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              const Text(
+                                'Duração: ',
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                              Text(
+                                session.movieDuration,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Color(0xFFFF9600)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Row(
+                            children: [
+                              const Text(
+                                'Classificação: ',
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.white),
+                              ),
+                              _buildClassificationContainer(
+                                  session.movieClassification),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            session.movieTitle,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: schedulesForDate
+                                .expand((schedule) => schedule.rooms.map(
+                                      (room) => Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            room.name,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          'Dublado: ${room.isDubbed ? "Sim" : "Não"}',
-                                          style: const TextStyle(
-                                            color: Colors.white,
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            'Dublado: ${room.isDubbed ? "Sim" : "Não"}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          '3D: ${room.is3D ? "Sim" : "Não"}',
-                                          style: const TextStyle(
-                                            color: Colors.white,
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            '3D: ${room.is3D ? "Sim" : "Não"}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Wrap(
-                                          spacing: 5,
-                                          runSpacing: 5,
-                                          children: room.times
-                                              .map(
-                                                (time) => ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(5),
-                                                    color:
-                                                        const Color(0xFF590A0A),
-                                                    child: Text(
-                                                      time.time,
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
+                                          const SizedBox(height: 10),
+                                          Wrap(
+                                            spacing: 5,
+                                            runSpacing: 5,
+                                            children: room.times
+                                                .map(
+                                                  (time) => ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5),
+                                                      color: const Color(
+                                                          0xFF590A0A),
+                                                      child: Text(
+                                                        time.time,
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                        const SizedBox(height: 15),
-                                      ],
-                                    ),
-                                  ))
-                              .toList(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          )
+                                                )
+                                                .toList(),
+                                          ),
+                                          const SizedBox(height: 15),
+                                        ],
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
         ],
       ),
       bottomNavigationBar: const SizedBox(
